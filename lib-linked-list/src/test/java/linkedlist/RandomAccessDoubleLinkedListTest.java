@@ -16,7 +16,7 @@ public class RandomAccessDoubleLinkedListTest {
    * Note, the linked list it's self is mutable and therefore must still be protected with locks
    */
 
-  //an immutable sequence. note, all params must be immutable or made so in the constructor
+  // an immutable event. note, all params must be immutable or made so in the constructor
   public record Event(String assetId, String eventType) {}
 
   // an immutable sequence. note, all params must be immutable or made so in the constructor
@@ -48,6 +48,7 @@ public class RandomAccessDoubleLinkedListTest {
     assertEquals("3", itr.next().id());
     assertEquals("2", itr.next().id());
 
+    // prove that the event list is immutable
     assertThrows(UnsupportedOperationException.class, () -> one.events.add(new Event("JML","Commercial")));
 
     // compilation errors since records are immutable
