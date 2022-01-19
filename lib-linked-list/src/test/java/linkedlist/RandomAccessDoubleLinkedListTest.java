@@ -13,7 +13,7 @@ public class RandomAccessDoubleLinkedListTest {
   /**
    * Demo of an immutable sequence cache using a custom implementation of a double linked list with random access.
    *
-   * Note, the linked list it's self is mutable and therefore must still be protected with locks
+   * Note, the linked list itself is mutable and therefore must still be protected with locks
    */
 
   // an immutable event. note, all params must be immutable or made so in the constructor
