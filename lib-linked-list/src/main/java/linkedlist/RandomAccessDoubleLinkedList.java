@@ -16,6 +16,7 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
     Node prev;
     E item;
     Node next;
+
     Node(E item, Node prev) {
       this.item = item;
       this.prev = prev;
@@ -45,32 +46,25 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
       int checkSize = randomAccessMap.size();
       int count = 0;
       Node current = head;
+
       @Override
       public boolean hasNext() {
-        checkForComodification();
+        checkForComodification(checkSize);
         return count < checkSize;
       }
 
       @Override
       public E next() {
-        checkForComodification();
+        checkForComodification(checkSize);
         E result = null;
         if (current != null) {
           result = current.item;
           current = current.next;
-          count ++;
+          count++;
         }
         return result;
       }
-
-      private void checkForComodification() {
-        if (randomAccessMap.size() != checkSize) {
-          throw new ConcurrentModificationException("List size has changed");
-        }
-      }
     };
-
-
   }
 
   @Override
@@ -90,10 +84,12 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
 
   @Override
   public Object[] toArray() {
+    int checkSize = randomAccessMap.size();
     Object[] result = new Object[randomAccessMap.size()];
     int i = 0;
     Node node = head;
     while (node != null) {
+      checkForComodification(checkSize);
       result[i++] = node.item;
       node = node.next;
     }
@@ -103,13 +99,17 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
   @Override
   @SuppressWarnings("unchecked")
   public <T> T[] toArray(T[] a) {
+    int checkSize = randomAccessMap.size();
     if (a.length < randomAccessMap.size()) {
-      a = (T[])java.lang.reflect.Array.newInstance(
-          a.getClass().getComponentType(), randomAccessMap.size());
+      a =
+          (T[])
+              java.lang.reflect.Array.newInstance(
+                  a.getClass().getComponentType(), randomAccessMap.size());
     }
     int i = 0;
     Object[] result = a;
     for (Node x = head; x != null; x = x.next) {
+      checkForComodification(checkSize);
       result[i++] = x.item;
     }
 
@@ -134,7 +134,7 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
         head = remove.next;
       }
       if (remove == tail) {
-        tail = remove .prev;
+        tail = remove.prev;
       }
       return true;
     }
@@ -194,7 +194,7 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
       afterNode.next = node;
       randomAccessMap.put(item, node);
     } else {
-      throw new IllegalArgumentException("Could not find list node for ["+after+"]");
+      throw new IllegalArgumentException("Could not find list node for [" + after + "]");
     }
   }
 
@@ -203,7 +203,7 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
     if (itemNode != null) {
       itemNode.item = item;
     } else {
-      throw new IllegalArgumentException("Could not find list node for ["+was+"]");
+      throw new IllegalArgumentException("Could not find list node for [" + was + "]");
     }
   }
 
@@ -229,4 +229,9 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
     return sb.toString();
   }
 
+  private void checkForComodification(int checkSize) {
+    if (randomAccessMap.size() != checkSize) {
+      throw new ConcurrentModificationException("List size has changed");
+    }
+  }
 }

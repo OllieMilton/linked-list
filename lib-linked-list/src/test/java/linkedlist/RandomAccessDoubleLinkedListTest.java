@@ -17,11 +17,11 @@ public class RandomAccessDoubleLinkedListTest {
    */
 
   // an immutable event. note, all params must be immutable or made so in the constructor
-  public record Event(String assetId, String eventType) {}
+  record Event(String assetId, String eventType) {}
 
   // an immutable sequence. note, all params must be immutable or made so in the constructor
-  public record Sequence(String id, ZonedDateTime startDateTime, List<Event> events) {
-    public Sequence {
+  record Sequence(String id, ZonedDateTime startDateTime, List<Event> events) {
+    Sequence {
       events = Collections.unmodifiableList(events);
     }
   }
