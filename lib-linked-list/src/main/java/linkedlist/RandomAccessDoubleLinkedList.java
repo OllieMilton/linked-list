@@ -10,7 +10,7 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
 
   private Node head;
   private Node tail;
-  private Map<E, Node> randomAccessMap = new HashMap<>();
+  private final Map<E, Node> randomAccessMap = new HashMap<>();
 
   private class Node {
     Node prev;
@@ -42,15 +42,18 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
 
   @Override
   public Iterator<E> iterator() {
+    return iterator(head.item);
+  }
+
+  public Iterator<E> iterator(E from) {
     return new Iterator<E>() {
       int checkSize = randomAccessMap.size();
-      int count = 0;
-      Node current = head;
+      Node current = randomAccessMap.get(from);
 
       @Override
       public boolean hasNext() {
         checkForComodification(checkSize);
-        return count < checkSize;
+        return current != null;
       }
 
       @Override
@@ -60,7 +63,6 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
         if (current != null) {
           result = current.item;
           current = current.next;
-          count++;
         }
         return result;
       }
@@ -164,7 +166,6 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
 
   @Override
   public boolean retainAll(Collection<?> c) {
-    // TODO Auto-generated method stub
     return false;
   }
 
@@ -185,26 +186,49 @@ public class RandomAccessDoubleLinkedList<E> implements Collection<E> {
 
   public void insertAfter(E after, E item) {
     Node afterNode = randomAccessMap.get(after);
-    if (afterNode != null) {
-      Node node = new Node(item, afterNode);
-      if (afterNode.next != null) {
-        node.next = afterNode.next;
-        node.next.prev = node;
-      }
-      afterNode.next = node;
-      randomAccessMap.put(item, node);
-    } else {
+    if (afterNode == null) {
       throw new IllegalArgumentException("Could not find list node for [" + after + "]");
     }
+    Node node = new Node(item, afterNode);
+    if (afterNode.next != null) {
+      node.next = afterNode.next;
+      node.next.prev = node;
+    }
+    afterNode.next = node;
+    randomAccessMap.put(item, node);
   }
 
-  public void put(E was, E item) {
+  public void replace(E was, E item) {
     Node itemNode = randomAccessMap.get(was);
-    if (itemNode != null) {
-      itemNode.item = item;
-    } else {
+    if (itemNode == null) {
       throw new IllegalArgumentException("Could not find list node for [" + was + "]");
     }
+    itemNode.item = item;
+  }
+
+  public void replace(E from, E to, Collection<E> items) {
+    Node fromNode = randomAccessMap.get(from);
+    Node toNode = randomAccessMap.get(to);
+    if (fromNode == null || toNode == null) {
+      throw new IllegalArgumentException("Could not find list node for from or to");
+    }
+    // disconnect the old block
+    if (fromNode.next != null) {
+      fromNode.next.prev = null;
+    }
+    if (toNode.prev != null) {
+      toNode.prev.next = null;
+    }
+    // add new, initialise node to from node which simply confirms the list to from and to if items is empty
+    Node node = fromNode;
+    Node prev = fromNode;
+    for (E item : items) {
+      node = new Node(item, prev);
+      prev.next = node;
+      prev = node;
+      randomAccessMap.put(item, node);
+    }
+    toNode.prev = node;
   }
 
   @Override

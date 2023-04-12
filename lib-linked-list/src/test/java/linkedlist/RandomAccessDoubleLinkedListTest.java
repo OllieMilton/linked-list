@@ -57,7 +57,7 @@ public class RandomAccessDoubleLinkedListTest {
 
     // Update a node in the list with a new entry
     Sequence four = new Sequence("4", ZonedDateTime.now(), Collections.singletonList(new Event("TEST-1", "program")));
-    list.put(one, four);
+    list.replace(one, four);
 
     // check list size
     assertEquals(3, list.size());
