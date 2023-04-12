@@ -10,8 +10,10 @@ class PartitionedLinkedListTest {
 
   private PartitionedLinkedList<LocalDateTime, Item> list = new PartitionedLinkedList<>(new PartitionIndexFactory<LocalDateTime>() {
 
+    // partition at 6am every day
     private LocalTime startOfDay = LocalTime.of(6, 0);
 
+    // limit the number of partitions to 8 and therefore 8 days
     @Override
     public int maxPartitionCount() {
       return 8;
@@ -19,6 +21,8 @@ class PartitionedLinkedListTest {
 
     @Override
     public PartitionIndex<LocalDateTime> newPartitionIndex(LocalDateTime index) {
+      // create a new partition starting at 6 am on the date of the incoming sequence that covers 24 hours
+      // note, this is a bit naive as it stands as and needs to take the incoming time into account
       return new PartitionIndex<>(index.with(startOfDay), index.with(startOfDay).plusHours(24));
     }});
 
