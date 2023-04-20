@@ -3,7 +3,6 @@ package linkedlist.partitioned;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import linkedlist.partitioned.PartitionIndex;
 
 class PartitionIndexTest {
 

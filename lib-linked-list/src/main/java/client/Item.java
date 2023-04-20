@@ -10,10 +10,11 @@ public class Item implements Indexed<LocalDateTime> {
 
   private final LocalDateTime startDateTime;
   private static int count = 0;
+  private int localCount;
 
   public Item(LocalDateTime startDateTime) {
     this.startDateTime = startDateTime;
-    count ++;
+    localCount = ++count;
   }
 
   public static int getCount() {
